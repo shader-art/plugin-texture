@@ -1,8 +1,9 @@
 {
   "name": "@shader-art/plugin-texture",
   "version": "0.0.1",
-  "description": "",
+  "description": "Texture support for shader-art",
   "repository": "shader-art/plugin-texture",
+  "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "source": "./src/index.ts",
@@ -18,9 +19,12 @@
     "node": ">=12"
   },
   "scripts": {
+    "build": "npm run build:types -s && npm run build:js -s && npm run build:cjs -s && npm run build:min -s",
     "build:types": "tsc -d --emitDeclarationOnly",
-    "build": "esbuild --format=esm --bundle --outdir=dist --minify src/index.ts",
-    "test": "jest",
+    "build:js": "esbuild --format=esm --bundle --outdir=dist --minify src/index.ts",
+    "build:cjs": "esbuild --format=cjs --bundle --outdir=dist src/index.ts && mv src/index.js src/index.cjs",
+    "build:min": "esbuild --format=esm --bundle --outdir=dist src/index.ts && mv src/index.js src/index.min.esm.js",
+    "test": "jest -c jest.config.cjs",
     "prepublish": "npx @skypack/package-check"
   },
   "keywords": [
