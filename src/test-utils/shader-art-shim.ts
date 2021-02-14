@@ -8,7 +8,7 @@ export class ShaderArtShim extends HTMLElement {
   initialized = false;
 
   static plugins: (() => ShaderArtPlugin)[] = [];
-  static register(plugins: (() => ShaderArtPlugin)[]) {
+  static register(plugins: (() => ShaderArtPlugin)[]): void {
     ShaderArtShim.plugins = plugins;
     if (typeof customElements.get('shader-art') === 'undefined') {
       customElements.define('shader-art', ShaderArtShim);
@@ -19,7 +19,7 @@ export class ShaderArtShim extends HTMLElement {
     super();
   }
 
-  setup() {
+  setup(): void {
     const canvas = document.createElement('canvas');
     this.appendChild(canvas);
 
@@ -51,17 +51,17 @@ export class ShaderArtShim extends HTMLElement {
     });
   }
 
-  connectedCallback() {
+  connectedCallback(): void {
     if (!this.gl) {
       this.setup();
     }
   }
 
-  disconnectedCallback() {
+  disconnectedCallback(): void {
     this.dispose();
   }
 
-  dispose() {
+  dispose(): void {
     if (!this.gl || !this.canvas) {
       return;
     }
@@ -74,5 +74,9 @@ export class ShaderArtShim extends HTMLElement {
     this.removeChild(this.canvas);
   }
 
-  render() {}
+  render(): void {
+    if (this.gl) {
+      this.gl.drawArrays(this.gl.TRIANGLES, 0, 0);
+    }
+  }
 }
