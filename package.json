@@ -19,11 +19,10 @@
     "node": ">=12"
   },
   "scripts": {
-    "build": "npm run build:types -s && npm run build:js -s && npm run build:cjs -s && npm run build:min -s",
+    "build": "npm run build:types -s && npm run build:js -s && npm run build:cjs -s",
     "build:types": "tsc -d --emitDeclarationOnly",
-    "build:js": "esbuild --format=esm --bundle --outdir=dist --minify src/index.ts",
-    "build:cjs": "esbuild --format=cjs --bundle --outdir=dist src/index.ts && mv src/index.js src/index.cjs",
-    "build:min": "esbuild --format=esm --bundle --outdir=dist src/index.ts && mv src/index.js src/index.min.esm.js",
+    "build:js": "esbuild --format=esm --bundle --minify src/index.ts > dist/index.esm.js",
+    "build:cjs": "esbuild --format=cjs --bundle --minify src/index.ts > dist/index.cjs",
     "test": "jest -c jest.config.cjs",
     "prepublish": "npx @skypack/package-check"
   },
