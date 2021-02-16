@@ -53,8 +53,8 @@ uniform sampler2D cat;
 - `name` name of the uniform variable
 - `wrap-s` horizontal texture wrapping (mirrored-repeat|repeat(default)|clamp-to-edge)
 - `wrap-t` vertical texture wrapping (mirrored-repeat|repeat(default)|clamp-to-edge)
-- `min-filter` texture minification filter (linear, nearest, nearest-mipmap-nearest, linear-mipmap-nearest, linear-mipmap-linear, nearest-mipmap-linear (default))
-- `mag-filter` texture magnification filter (linear(default)|nearest)
+- `min-filter` texture minification filter (linear, nearest(default), nearest-mipmap-nearest, linear-mipmap-nearest, linear-mipmap-linear, nearest-mipmap-linear)
+- `mag-filter` texture magnification filter (linear|nearest(default))
 
 ### Further resources
 
