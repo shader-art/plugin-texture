@@ -2,6 +2,11 @@ import { ShaderArtPlugin } from '@shader-art/plugin-base';
 
 import { loadImage } from './image-loader';
 
+// used to be able to index WebGL context by string (used for the options)
+interface IndexableType {
+  [key: string]: any;
+}
+
 export interface ShaderArtTexture {
   src: string;
   idx: number;
@@ -27,8 +32,6 @@ export class TexturePlugin implements ShaderArtPlugin {
   gl: WebGLRenderingContext | WebGL2RenderingContext | null = null;
   program: WebGLProgram | null = null;
   canvas: HTMLCanvasElement | null = null;
-
-  constructor() {}
 
   public setup(
     hostElement: HTMLElement,
@@ -172,15 +175,21 @@ export class TexturePlugin implements ShaderArtPlugin {
     gl: WebGLRenderingContext | WebGL2RenderingContext,
     options?: Record<string, string>
   ) {
-    if (!options) {
-      return;
-    }
-    for (const [key, value] of Object.entries(options)) {
-      const screamKey = 'TEXTURE_' + key.toUpperCase().replace(/\-/g, '_');
-      const screamValue = value.toUpperCase().replace(/\-/g, '_');
+    const defaults: Record<string, string> = {
+      'min-filter': 'nearest',
+      'mag-filter': 'nearest',
+    };
+    const optionsWithDefaults = Object.assign({}, defaults, options || {});
+    for (const [key, value] of Object.entries(optionsWithDefaults)) {
+      const screamKey = 'TEXTURE_' + key.toUpperCase().replace(/-/g, '_');
+      const screamValue = value.toUpperCase().replace(/-/g, '_');
+      const indexableGL: IndexableType = gl;
       if (screamKey in gl && screamValue in gl) {
-        //@ts-ignore indexing WebGL parameters by string
-        gl.texParameteri(gl.TEXTURE_2D, gl[screamKey], gl[screamValue]);
+        gl.texParameteri(
+          gl.TEXTURE_2D,
+          indexableGL[screamKey],
+          indexableGL[screamValue]
+        );
       }
     }
   }
@@ -295,4 +304,4 @@ export class TexturePlugin implements ShaderArtPlugin {
   }
 }
 
-export const TexturePluginFactory = () => new TexturePlugin();
+export const TexturePluginFactory = (): TexturePlugin => new TexturePlugin();

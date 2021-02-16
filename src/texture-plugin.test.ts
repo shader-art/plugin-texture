@@ -4,10 +4,9 @@ import { ShaderArtShim } from './test-utils/shader-art-shim';
 
 const html = (x: any) => x;
 
-function asynced(fn: (...args: any[]) => void, timeout = 0): Promise<void> {
+function wait(timeout = 0): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(() => {
-      fn();
       resolve();
     }, timeout);
   });
@@ -116,7 +115,7 @@ describe('TexturePlugin tests', () => {
     const p = document.createElement('p');
     p.textContent = 'Hi';
     div.appendChild(p);
-    await asynced(() => {}, 0);
+    await wait(0);
     expect(mutated).toBe(true);
   });
 
@@ -161,7 +160,7 @@ describe('TexturePlugin tests', () => {
     const img = element.querySelector('img');
     expect(img).toBeDefined();
     img?.setAttribute('src', 'https://picsum.photos/128/128');
-    await asynced(() => {}, 0);
+    await wait(0);
     expect((<TexturePlugin>texturePlugin).imagesLoaded).toBe(false);
     await (<TexturePlugin>texturePlugin).whenImagesLoaded();
     let newTextureState = (<TexturePlugin>texturePlugin)?.textureState;
@@ -169,7 +168,7 @@ describe('TexturePlugin tests', () => {
     expect(newTextureState.texture.src).toBe('https://picsum.photos/128/128');
 
     img?.setAttribute('src', 'https://picsum.photos/135/124');
-    await asynced(() => {}, 0);
+    await wait(0);
     expect((<TexturePlugin>texturePlugin).imagesLoaded).toBe(false);
     await (<TexturePlugin>texturePlugin).whenImagesLoaded();
     newTextureState = (<TexturePlugin>texturePlugin)?.textureState;
@@ -192,7 +191,7 @@ describe('TexturePlugin tests', () => {
     element.appendChild(img);
 
     // let MutationObserver do its thing
-    await asynced(() => {}, 0);
+    await wait(0);
     expect((<TexturePlugin>texturePlugin).imagesLoaded).toBe(false);
     await (<TexturePlugin>texturePlugin).whenImagesLoaded();
     const textureState = (<TexturePlugin>texturePlugin)?.textureState;

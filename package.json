@@ -24,7 +24,7 @@
     "build:js": "esbuild --format=esm --bundle --minify src/index.ts > dist/index.esm.js",
     "build:cjs": "esbuild --format=cjs --bundle --minify src/index.ts > dist/index.cjs",
     "lint": "npm run lint:js -s && npm run lint:package -s",
-    "lint:js": "eslint src/**/*.ts",
+    "lint:js": "eslint src",
     "lint:package": "npx @skypack/package-check",
     "test": "npm run lint -s && jest -c jest.config.cjs"
   },
@@ -36,6 +36,7 @@
   "author": "Lea Rosema",
   "license": "MIT",
   "devDependencies": {
+    "@skypack/package-check": "^0.2.2",
     "@types/jest": "^26.0.20",
     "@typescript-eslint/eslint-plugin": "^4.15.0",
     "@typescript-eslint/parser": "^4.15.0",
