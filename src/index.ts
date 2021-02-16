@@ -2,18 +2,12 @@ import { ShaderArtPlugin } from '@shader-art/plugin-base';
 
 import { loadImage } from './image-loader';
 
-// used to be able to index WebGL context by string (used for the options)
-interface IndexableType {
-  [key: string]: any;
-}
-
 export interface ShaderArtTexture {
   src: string;
   idx: number;
   name: string;
   options?: Record<string, string>;
 }
-
 export interface ShaderArtTextureState extends ShaderArtTexture {
   image: HTMLImageElement;
   uniformLoc: WebGLUniformLocation | null;
@@ -173,23 +167,62 @@ export class TexturePlugin implements ShaderArtPlugin {
 
   private applyTextureOptions(
     gl: WebGLRenderingContext | WebGL2RenderingContext,
-    options?: Record<string, string>
+    options?: Record<string, string>,
+    textureType = WebGLRenderingContext.TEXTURE_2D
   ) {
     const defaults: Record<string, string> = {
       'min-filter': 'nearest',
       'mag-filter': 'nearest',
     };
+    const glOptionCodes: Record<string, number> = {
+      'min-filter': gl.TEXTURE_MIN_FILTER,
+      'mag-filter': gl.TEXTURE_MAG_FILTER,
+      'wrap-s': gl.TEXTURE_WRAP_S,
+      'wrap-t': gl.TEXTURE_WRAP_T,
+      // WebGL 2 additions
+      'base-level': WebGL2RenderingContext.TEXTURE_BASE_LEVEL,
+      'compare-func': WebGL2RenderingContext.TEXTURE_COMPARE_FUNC,
+      'compare-mode': WebGL2RenderingContext.TEXTURE_COMPARE_MODE,
+      'max-level': WebGL2RenderingContext.TEXTURE_MAX_LEVEL,
+      'max-lod': WebGL2RenderingContext.TEXTURE_MAX_LOD,
+      'min-lod': WebGL2RenderingContext.TEXTURE_MIN_LOD,
+      'wrap-r': WebGL2RenderingContext.TEXTURE_WRAP_R,
+    };
+    const glValueCodes: Record<string, number> = {
+      nearest: gl.NEAREST,
+      linear: gl.LINEAR,
+      'nearest-mipmap-nearest': gl.NEAREST_MIPMAP_LINEAR,
+      'nearset-mipmap-nearest': gl.NEAREST_MIPMAP_NEAREST,
+      'linear-mipmap-linear': gl.LINEAR_MIPMAP_LINEAR,
+      'linear-mipmap-nearest': gl.LINEAR_MIPMAP_NEAREST,
+      repeat: gl.REPEAT,
+      'mirrored-repeat': gl.MIRRORED_REPEAT,
+      'clamp-to-edge': gl.CLAMP_TO_EDGE,
+      // WebGL 2 additions
+      lequal: gl.LEQUAL,
+      gequal: gl.GEQUAL,
+      less: gl.LESS,
+      greater: gl.GREATER,
+      equal: gl.EQUAL,
+      notequal: gl.NOTEQUAL,
+      always: gl.ALWAYS,
+      never: gl.NEVER,
+      none: gl.NONE,
+      'compare-ref-to-texture': WebGL2RenderingContext.COMPARE_REF_TO_TEXTURE,
+    };
+
     const optionsWithDefaults = Object.assign({}, defaults, options || {});
     for (const [key, value] of Object.entries(optionsWithDefaults)) {
-      const screamKey = 'TEXTURE_' + key.toUpperCase().replace(/-/g, '_');
-      const screamValue = value.toUpperCase().replace(/-/g, '_');
-      const indexableGL: IndexableType = gl;
-      if (screamKey in gl && screamValue in gl) {
-        gl.texParameteri(
-          gl.TEXTURE_2D,
-          indexableGL[screamKey],
-          indexableGL[screamValue]
-        );
+      if (key in glOptionCodes === false) {
+        continue;
+      }
+      if (value in glValueCodes) {
+        gl.texParameteri(textureType, glOptionCodes[key], glValueCodes[value]);
+        continue;
+      }
+      const numericValue = parseFloat(value);
+      if (!Number.isNaN(numericValue)) {
+        gl.texParameteri(textureType, glOptionCodes[key], numericValue);
       }
     }
   }

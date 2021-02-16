@@ -2,8 +2,6 @@ import { ShaderArtPlugin } from '@shader-art/plugin-base';
 import { TexturePlugin, TexturePluginFactory } from './index';
 import { ShaderArtShim } from './test-utils/shader-art-shim';
 
-const html = (x: any) => x;
-
 function wait(timeout = 0): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -25,7 +23,7 @@ const testTexture = (
   hidden
 >`;
 
-const vertexShader = html`
+const vertexShader = `
   <script type="vert">
     precision highp float;
     attribute vec4 position;
@@ -35,7 +33,7 @@ const vertexShader = html`
   </script>
 `;
 
-const fragmentShader = html`
+const fragmentShader = `
   <script type="frag">
     precision highp float;
     uniform vec2 resolution;
