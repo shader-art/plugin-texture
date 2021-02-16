@@ -1,6 +1,6 @@
 {
   "name": "@shader-art/plugin-texture",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Texture support for shader-art",
   "repository": "shader-art/plugin-texture",
   "type": "module",
